@@ -1,0 +1,39 @@
+@media screen and (max-width: 767px) {
+  .homepage-container {
+    flex-direction: column;
+    width: 100vw;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .login-form {
+    width: 100%;
+  }
+
+  .registration-link {
+    width: 100%;
+  }
+
+  .search-form {
+    width: 100%;
+  }
+
+  .search-form-container {
+    width: 100% !important;
+    margin-bottom: 1rem;
+  }
+
+  .text-container {
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .new-users-container {
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .user-container {
+    width: 100% !important;
+  }
+}

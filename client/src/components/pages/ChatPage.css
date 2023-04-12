@@ -1,0 +1,30 @@
+@media screen and (max-width: 767px) {
+  .chat-page-container {
+    flex-direction: column !important;
+    width: 100vw !important;
+    justify-content: center !important;
+    padding: 1rem !important;
+  }
+
+  .chatbox {
+    order: 1;
+    height: 60% !important;
+  }
+
+  .dialogue-list {
+    order: 2;
+    width: 100% !important;
+  }
+
+  .message-image {
+    max-width: 100% !important;
+  }
+
+  .message-video {
+    max-width: 100% !important;
+  }
+
+  .spinner-container {
+    height: 60% !important;
+  }
+}
