@@ -8,6 +8,8 @@ import { useDispatch } from "react-redux";
 import { setUser, logIn, setError } from "../../state/userActions";
 import { useNavigate } from "react-router-dom";
 
+import "./RegistrationForm.css";
+
 const regions = [...new Set(citiesRegions.map((obj) => obj.region))];
 
 const RegistrationForm = (props) => {
@@ -264,6 +266,7 @@ const RegistrationForm = (props) => {
         style={props.style}
         onSubmit={emailVerificationHandler}
         onHideEmailVerificationForm={toggleEmailVerificationFormHandler}
+        className="reg-form"
       >
         {isLoading && (
           <Spinner
@@ -301,7 +304,7 @@ const RegistrationForm = (props) => {
             />
           </div>
 
-          <div className="d-flex gap-5 justify-content-between">
+          <div className="name-email d-flex gap-5 justify-content-between">
             <Form.Group controlId="formBasicUsernameReg">
               <Form.Label>Имя:</Form.Label>
               <Form.Control
@@ -327,7 +330,7 @@ const RegistrationForm = (props) => {
             </Form.Group>
           </div>
 
-          <div className="d-flex gap-5 justify-content-between">
+          <div className="password d-flex gap-5 justify-content-between">
             <Form.Group controlId="formBasicPasswordReg">
               <Form.Label>Пароль:</Form.Label>
               <Form.Control

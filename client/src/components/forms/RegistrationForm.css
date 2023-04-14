@@ -1,0 +1,13 @@
+@media screen and (max-width: 767px) {
+  .reg-form {
+    width: 27rem !important;
+  }
+
+  .name-email {
+    column-gap: 0 !important;
+  }
+
+  .password {
+    column-gap: 0 !important;
+  }
+}

@@ -2,17 +2,30 @@ import yandexIcon from "../../icons/yandex.png";
 import mailruIcon from "../../icons/mailru.png";
 import vkIcon from "../../icons/vk.png";
 
+import ReactDOM from "react-dom";
 import { Button } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Overlay from "../overlay/Overlay";
+import AdditionalInfoForm from "../forms/AdditionalInfoForm";
 
 const AuthButton = (props) => {
-  const [yandex, setYandex] = useState({
+  const [service, setService] = useState({
     clientId: null,
     clientSecret: null,
     accessToken: null,
+    serviceName: props.icon,
   });
+
+  const [additionalInfo, setAdditionalInfo] = useState({
+    gender: false,
+    email: false,
+    dateOfBirth: false,
+  });
+
   const [userInfo, setUserInfo] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const isLoggedIn = useSelector((state) => state.user.user);
 
@@ -31,25 +44,60 @@ const AuthButton = (props) => {
   }
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/yandex-data")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ok) {
-          setYandex({
-            clientId: data.YANDEX_CLIENT_ID,
-            clientSecret: data.YANDEX_CLIENT_SECRET,
-          });
-        }
-      });
+    if (service.serviceName === "yandex") {
+      fetch("http://localhost:3001/api/yandex-data")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.ok) {
+            setService((prevService) => {
+              return {
+                ...prevService,
+                clientId: data.YANDEX_CLIENT_ID,
+                clientSecret: data.YANDEX_CLIENT_SECRET,
+                serviceName: "yandex",
+              };
+            });
+          }
+        });
+    }
+
+    if (service.serviceName === "mailru") {
+      fetch("http://localhost:3001/api/mailru-data")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.ok) {
+            setService((prevService) => {
+              return {
+                ...prevService,
+                clientId: data.MAILRU_CLIENT_ID,
+                clientSecret: data.MAILRU_CLIENT_SECRET,
+                serviceName: "mailru",
+              };
+            });
+          }
+        });
+    }
+
+    console.log(service);
   }, []);
 
   const authUserHandler = async () => {
-    const redirectUrl = `https://oauth.yandex.com/authorize?response_type=code&client_id=${yandex.clientId}`;
+    console.log(service.serviceName);
 
-    window.location.href = redirectUrl;
+    if (service.serviceName === "yandex" && service.clientId) {
+      const redirectUrl = `https://oauth.yandex.com/authorize?response_type=code&client_id=${service.clientId}`;
+      window.location.href = redirectUrl;
+    }
+
+    if (service.serviceName === "mailru" && service.clientId) {
+      const redirectUrl = `https://oauth.mail.ru/login?client_id=${service.clientId}&response_type=code&scope=userinfo&redirect_uri=http://localhost:3000/homepage&state=79ad0a17c707cb7a98d8d9c4065cf1f5c5fb5d8ee5fa1c2b5ca5bda7b9398d9d`;
+      window.location.href = redirectUrl;
+    }
   };
 
   useEffect(() => {
+    setAdditionalInfo({ gender: false, email: false, dateOfBirth: false });
+
     const searchParams = new URLSearchParams(window.location.search);
     const authCode = searchParams.get("code");
 
@@ -59,34 +107,71 @@ const AuthButton = (props) => {
       console.log("No auth code received");
     }
 
-    if (authCode && !isLoggedIn && yandex.clientId && yandex.clientSecret) {
-      console.log(
-        `Request body: grant_type=authorization_code&code=${authCode}&client_id=${yandex.clientId}&client_secret=${yandex.clientSecret}`
-      );
-
+    if (
+      authCode &&
+      !isLoggedIn &&
+      service.clientId &&
+      service.clientSecret &&
+      service.serviceName === "yandex"
+    ) {
       fetch("https://oauth.yandex.ru/token", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `grant_type=authorization_code&code=${authCode}&client_id=${yandex.clientId}&client_secret=${yandex.clientSecret}`,
+        body: `grant_type=authorization_code&code=${authCode}&client_id=${service.clientId}&client_secret=${service.clientSecret}`,
       })
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
           if (data.access_token) {
-            setYandex((prevYandex) => {
-              return { ...prevYandex, accessToken: data.access_token };
+            setService((prevService) => {
+              return { ...prevService, accessToken: data.access_token };
             });
           }
         })
         .catch((error) => console.error(error));
     }
-  }, [yandex.clientId, yandex.clientSecret]);
+
+    if (
+      authCode &&
+      !isLoggedIn &&
+      service.clientId &&
+      service.clientSecret &&
+      service.serviceName === "mailru"
+    ) {
+      fetch(`http://localhost:3001/api/mailru/accessToken/${authCode}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.access_token) {
+            setService((prevService) => {
+              return { ...prevService, accessToken: data.access_token };
+            });
+          }
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [service.clientId, service.clientSecret]);
 
   useEffect(() => {
-    if (yandex.accessToken) {
-      fetch(`http://localhost:3001/api/yandex/user/${yandex.accessToken}`)
+    console.log("Fetching user info: ");
+    console.log(service);
+
+    if (service.accessToken && service.serviceName === "yandex") {
+      fetch(`http://localhost:3001/api/yandex/user/${service.accessToken}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data.ok) {
+            setUserInfo({ ...data.user, gender: data.user.sex });
+          }
+        })
+        .catch((error) => console.error(error));
+    }
+
+    if (service.accessToken && service.serviceName === "mailru") {
+      fetch(`http://localhost:3001/api/mailru/user/${service.accessToken}`)
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
@@ -96,20 +181,79 @@ const AuthButton = (props) => {
         })
         .catch((error) => console.error(error));
     }
-  }, [yandex.accessToken]);
+  }, [service.serviceName, service.accessToken]);
+
+  useEffect(() => {
+    if (userInfo && (userInfo.gender?.length === 0 || !userInfo.gender)) {
+      console.log(userInfo.gender);
+      setAdditionalInfo((prevInfo) => {
+        return { ...prevInfo, gender: true };
+      });
+    }
+
+    if (userInfo && (!userInfo.birthday || userInfo.birthday.length === 0)) {
+      setAdditionalInfo((prevInfo) => {
+        return { ...prevInfo, dateOfBirth: true };
+      });
+    }
+  }, [userInfo]);
 
   console.log(userInfo);
+  console.log(additionalInfo);
+
+  const registerUserHandler = (additionalInfoObj) => {
+    const userData = { ...userInfo, ...additionalInfoObj };
+    const userObj = {};
+
+    console.log(userData);
+  };
 
   return (
-    <Button variant={props.variant} onClick={authUserHandler}>
-      <img
-        src={iconSrc}
-        alt={`icon-${props.icon}`}
-        style={{ height: "1.5rem" }}
-        className="mr-2"
-      />
-      {props.value}
-    </Button>
+    <>
+      {(additionalInfo.gender ||
+        additionalInfo.email ||
+        additionalInfo.dateOfBirth) &&
+        ReactDOM.createPortal(
+          <Overlay color="rgba(0, 0, 0, 0.30)" />,
+          document.querySelector("#overlay")
+        )}
+
+      {(additionalInfo.gender ||
+        additionalInfo.email ||
+        additionalInfo.dateOfBirth) && (
+        <AdditionalInfoForm
+          email={additionalInfo.email}
+          gender={additionalInfo.gender}
+          dateOfBirth={additionalInfo.dateOfBirth}
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            zIndex: "12",
+            width: "25rem",
+            transform: "translate(-50%, -50%)",
+          }}
+          onHideAdditionalInfoForm={() =>
+            setAdditionalInfo({
+              email: false,
+              dateOfBirth: false,
+              gender: false,
+            })
+          }
+          onRegisterUser={registerUserHandler}
+        />
+      )}
+
+      <Button variant={props.variant} onClick={authUserHandler}>
+        <img
+          src={iconSrc}
+          alt={`icon-${props.icon}`}
+          style={{ height: "1.5rem" }}
+          className="mr-2"
+        />
+        {props.value}
+      </Button>
+    </>
   );
 };
 

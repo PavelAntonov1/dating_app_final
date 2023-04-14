@@ -20,7 +20,6 @@ const upload = multer({ storage: storage });
 const sharp = require("sharp");
 const bcrypt = require("bcrypt");
 
-const session = require("express-session");
 const fetch = require("node-fetch");
 
 require("dotenv").config({ path: "../.env" });
@@ -34,6 +33,8 @@ const {
   JWT_SECRET,
   YANDEX_CLIENT_ID,
   YANDEX_CLIENT_SECRET,
+  MAILRU_CLIENT_ID,
+  MAILRU_CLIENT_SECRET,
 } = process.env;
 
 console.log(MONGODB_PASSWORD);
@@ -42,9 +43,6 @@ const uri = `mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_CLU
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-
-const passport = require("passport");
-const YandexStrategy = require("passport-yandex").Strategy;
 
 const corsOptions = {
   origin: "http://localhost:3000",
@@ -71,47 +69,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("client")); // change to public
 
-app.use(
-  session({
-    secret: crypto.randomBytes(16).toString("hex"), // Generate a random secret key
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      secure: false, // Change to true if using HTTPS
-      maxAge: 365 * 24 * 60 * 60 * 1000, // 1 day
-    },
-  })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.serializeUser(function (user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function (user, done) {
-  done(null, user);
-});
-
-passport.use(
-  new YandexStrategy(
-    {
-      clientID: YANDEX_CLIENT_ID,
-      clientSecret: YANDEX_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/homepage",
-    },
-    (accessToken, refreshToken, profile, done) => {
-      // Callback function to handle the authentication process
-      // You can save user data in your database or session
-      // You can also use the accessToken and refreshToken to make requests to the Yandex API
-      console.log(profile);
-
-      return done(null, profile);
-    }
-  )
-);
-
 let verificationCode = "";
 
 // USERS DATABASE INTERACTIONS
@@ -126,6 +83,15 @@ app.get("/api/yandex-data", (req, res) => {
     ok: true,
     YANDEX_CLIENT_ID,
     YANDEX_CLIENT_SECRET,
+  });
+});
+
+// MAILRU DATA
+app.get("/api/mailru-data", (req, res) => {
+  res.send({
+    ok: true,
+    MAILRU_CLIENT_ID,
+    MAILRU_CLIENT_SECRET,
   });
 });
 
@@ -161,6 +127,35 @@ app.post("/api/users/:username/delete", verifyToken, async (req, res) => {
   }
 });
 
+app.get("/api/mailru/accessToken/:authCode", async (req, res) => {
+  const { authCode } = req.params;
+
+  try {
+    const response = await fetch("https://oauth.mail.ru/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `grant_type=authorization_code&code=${authCode}&client_id=${MAILRU_CLIENT_ID}&client_secret=${MAILRU_CLIENT_SECRET}&redirect_uri=http://localhost:3000/homepage`,
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
+    res.send({
+      ok: true,
+      message: "Access token fetched successfully",
+      access_token: data.access_token,
+    });
+  } catch (err) {
+    res.send({
+      ok: false,
+      message: "Failed to fetch access token from mail.ru",
+    });
+  }
+});
+
 app.get("/api/yandex/user/:accessToken", async (req, res) => {
   const { accessToken } = req.params;
 
@@ -180,6 +175,29 @@ app.get("/api/yandex/user/:accessToken", async (req, res) => {
     res.send({
       ok: false,
       message: `Error while fetching user info from yandex: ${err}`,
+    });
+  }
+});
+
+app.get("/api/mailru/user/:accessToken", async (req, res) => {
+  const { accessToken } = req.params;
+
+  try {
+    const response = await fetch(
+      `https://oauth.mail.ru/userinfo?access_token=${accessToken}`
+    );
+
+    const userData = await response.json();
+
+    res.send({
+      ok: true,
+      message: "User info fetched successfully",
+      user: userData,
+    });
+  } catch (err) {
+    res.send({
+      ok: false,
+      message: `Error while fetching user info from mailru: ${err}`,
     });
   }
 });
@@ -816,25 +834,6 @@ app.post("/api/verify-code", (req, res) => {
       message: "The verification code is invalid",
     });
   }
-});
-
-app.get("/auth/yandex", async (req, res) => {
-  const { code } = req.query;
-
-  const redirectUri = "http://localhost:3000/homepage";
-
-  const url = `https://oauth.yandex.ru/token?grant_type=authorization_code&code=${code}&client_id=${YANDEX_CLIENT_ID}&client_secret=${YANDEX_CLIENT_SECRET}&redirect_uri=${redirectUri}`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
-
-  const data = await response.json();
-
-  res.json(data);
 });
 
 // DIALOGUES FUNCTIONALITY
