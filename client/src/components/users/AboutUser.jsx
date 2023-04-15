@@ -294,8 +294,8 @@ const AboutUser = (props) => {
 
         {isEditing && (
           <Form className="text-right" onSubmit={submitInfoHandler}>
-            <div className="d-flex gap-4">
-              <div className="d-flex gap-3 text-left">
+            <div className="d-flex gap-4 flex-wrap">
+              <div className="d-flex gap-3 text-left height-weight">
                 <Form.Group controlId="height-e">
                   <Form.Label className="font-weight-bold">Рост:</Form.Label>
                   <Form.Control
@@ -317,149 +317,151 @@ const AboutUser = (props) => {
                 </Form.Group>
               </div>
 
-              <div className="d-flex text-left gap-4">
-                <Form.Group controlId="bodyType-e">
-                  <Form.Label className="font-weight-bold">
-                    Телосложение:
-                  </Form.Label>
-                  <div>
+              <div>
+                <div className="d-flex text-left gap-4 user-data w-100">
+                  <Form.Group controlId="bodyType-e">
+                    <Form.Label className="font-weight-bold">
+                      Телосложение:
+                    </Form.Label>
+                    <div>
+                      <Form.Check
+                        label="Худощавое"
+                        value="0"
+                        name="body-type"
+                        type="radio"
+                        onChange={() => setBodyType(0)}
+                      />
+                      <Form.Check
+                        label="Обычное"
+                        value="1"
+                        name="body-type"
+                        type="radio"
+                        onChange={() => setBodyType(1)}
+                      />
+                      <Form.Check
+                        label="Спортивное"
+                        value="2"
+                        name="body-type"
+                        type="radio"
+                        onChange={() => setBodyType(2)}
+                      />
+                      <Form.Check
+                        label="Мускулистое"
+                        value="3"
+                        name="body-type"
+                        type="radio"
+                        onChange={() => setBodyType(3)}
+                      />
+                      <Form.Check
+                        label="Плотное"
+                        value="4"
+                        name="body-type"
+                        type="radio"
+                        onChange={() => setBodyType(4)}
+                      />
+                      <Form.Check
+                        label="Полное"
+                        value="5"
+                        name="body-type"
+                        type="radio"
+                        onChange={() => setBodyType(5)}
+                      />
+                    </div>
+                  </Form.Group>
+
+                  <Form.Group controlId="hairColor-e">
+                    <Form.Label className="font-weight-bold">
+                      Цвет Волос:
+                    </Form.Label>
+                    <div>
+                      <Form.Check
+                        label="Светлый"
+                        value="0"
+                        type="radio"
+                        name="hair-color"
+                        onChange={() => setHairColor(0)}
+                      />
+                      <Form.Check
+                        label="Тёмный"
+                        value="1"
+                        name="hair-color"
+                        type="radio"
+                        onChange={() => setHairColor(1)}
+                      />
+                      <Form.Check
+                        label="Рыжий"
+                        value="2"
+                        name="hair-color"
+                        type="radio"
+                        onChange={() => setHairColor(2)}
+                      />
+                      <Form.Check
+                        label="Русый"
+                        value="3"
+                        name="hair-color"
+                        type="radio"
+                        onChange={() => setHairColor(3)}
+                      />
+                      <Form.Check
+                        label="Яркие"
+                        value="4"
+                        name="hair-color"
+                        type="radio"
+                        onChange={() => setHairColor(4)}
+                      />
+                      <Form.Check
+                        label="Седые"
+                        value="5"
+                        name="hair-color"
+                        type="radio"
+                        onChange={() => setHairColor(5)}
+                      />
+                      <Form.Check
+                        type="radio"
+                        label="Нет Волос"
+                        value="6"
+                        name="hair-color"
+                        onChange={() => setHairColor(6)}
+                      />
+                    </div>
+                  </Form.Group>
+
+                  <Form.Group controlId="financialStatus-e">
+                    <Form.Label className="font-weight-bold">
+                      Материальное Положение:
+                    </Form.Label>
                     <Form.Check
-                      label="Худощавое"
+                      label="Непостоянные Зарaботки"
                       value="0"
-                      name="body-type"
+                      name="financial-status"
                       type="radio"
-                      onChange={() => setBodyType(0)}
+                      onChange={() => setFinancialStatus(0)}
                     />
                     <Form.Check
-                      label="Обычное"
+                      label="Постоянный небольшой доход"
                       value="1"
-                      name="body-type"
+                      name="financial-status"
                       type="radio"
-                      onChange={() => setBodyType(1)}
+                      onChange={() => setFinancialStatus(1)}
                     />
                     <Form.Check
-                      label="Спортивное"
+                      label="Стабильный средний доход"
                       value="2"
-                      name="body-type"
+                      name="financial-status"
                       type="radio"
-                      onChange={() => setBodyType(2)}
+                      onChange={() => setFinancialStatus(2)}
                     />
                     <Form.Check
-                      label="Мускулистое"
+                      label="Высокий Заработок"
+                      type="radio"
                       value="3"
-                      name="body-type"
-                      type="radio"
-                      onChange={() => setBodyType(3)}
+                      name="financial-status"
+                      onChange={() => setFinancialStatus(3)}
                     />
-                    <Form.Check
-                      label="Плотное"
-                      value="4"
-                      name="body-type"
-                      type="radio"
-                      onChange={() => setBodyType(4)}
-                    />
-                    <Form.Check
-                      label="Полное"
-                      value="5"
-                      name="body-type"
-                      type="radio"
-                      onChange={() => setBodyType(5)}
-                    />
-                  </div>
-                </Form.Group>
+                  </Form.Group>
+                </div>
 
-                <Form.Group controlId="hairColor-e">
-                  <Form.Label className="font-weight-bold">
-                    Цвет Волос:
-                  </Form.Label>
-                  <div>
-                    <Form.Check
-                      label="Светлый"
-                      value="0"
-                      type="radio"
-                      name="hair-color"
-                      onChange={() => setHairColor(0)}
-                    />
-                    <Form.Check
-                      label="Тёмный"
-                      value="1"
-                      name="hair-color"
-                      type="radio"
-                      onChange={() => setHairColor(1)}
-                    />
-                    <Form.Check
-                      label="Рыжий"
-                      value="2"
-                      name="hair-color"
-                      type="radio"
-                      onChange={() => setHairColor(2)}
-                    />
-                    <Form.Check
-                      label="Русый"
-                      value="3"
-                      name="hair-color"
-                      type="radio"
-                      onChange={() => setHairColor(3)}
-                    />
-                    <Form.Check
-                      label="Яркие"
-                      value="4"
-                      name="hair-color"
-                      type="radio"
-                      onChange={() => setHairColor(4)}
-                    />
-                    <Form.Check
-                      label="Седые"
-                      value="5"
-                      name="hair-color"
-                      type="radio"
-                      onChange={() => setHairColor(5)}
-                    />
-                    <Form.Check
-                      type="radio"
-                      label="Нет Волос"
-                      value="6"
-                      name="hair-color"
-                      onChange={() => setHairColor(6)}
-                    />
-                  </div>
-                </Form.Group>
-
-                <Form.Group controlId="financialStatus-e">
-                  <Form.Label className="font-weight-bold">
-                    Материальное Положение:
-                  </Form.Label>
-                  <Form.Check
-                    label="Непостоянные Зарaботки"
-                    value="0"
-                    name="financial-status"
-                    type="radio"
-                    onChange={() => setFinancialStatus(0)}
-                  />
-                  <Form.Check
-                    label="Постоянный небольшой доход"
-                    value="1"
-                    name="financial-status"
-                    type="radio"
-                    onChange={() => setFinancialStatus(1)}
-                  />
-                  <Form.Check
-                    label="Стабильный средний доход"
-                    value="2"
-                    name="financial-status"
-                    type="radio"
-                    onChange={() => setFinancialStatus(2)}
-                  />
-                  <Form.Check
-                    label="Высокий Заработок"
-                    type="radio"
-                    value="3"
-                    name="financial-status"
-                    onChange={() => setFinancialStatus(3)}
-                  />
-                </Form.Group>
-
-                <Form.Group controlId="additionalInfo-e">
+                <Form.Group controlId="additionalInfo-e" className="text-left">
                   <Form.Label className="font-weight-bold">
                     Доп. Информация:
                   </Form.Label>
@@ -475,7 +477,7 @@ const AboutUser = (props) => {
             </div>
 
             {props.isClient && (
-              <Button type="submit" variant="primary">
+              <Button type="submit" variant="primary" className="mt-3">
                 Подтвердить
               </Button>
             )}

@@ -11,7 +11,7 @@ import ProfilePage from "./components/pages/ProfilePage";
 import NavigationBar from "./components/navigation/NavigationBar";
 
 import { useSelector, useDispatch } from "react-redux";
-import { logIn, setUser } from "./state/userActions";
+import { logIn, setUser, logOut } from "./state/userActions";
 import Cookies from "js-cookie";
 import ChatPage from "./components/pages/ChatPage";
 import SearchPage from "./components/pages/SearchPage";

@@ -102,12 +102,11 @@ const AuthButton = (props) => {
           }
         });
     }
-
-    return () => setIsLoadingPage(false);
   }, []);
 
   const authUserHandler = async () => {
     setIsLoadingPage(true);
+
     console.log(service.serviceName);
 
     if (service.serviceName === "yandex" && service.clientId) {
@@ -179,6 +178,8 @@ const AuthButton = (props) => {
         })
         .catch((error) => console.error(error));
     }
+
+    setTimeout(() => setIsLoadingPage(false), 2000);
   }, [service.clientId, service.clientSecret]);
 
   useEffect(() => {
@@ -196,7 +197,7 @@ const AuthButton = (props) => {
               gender: data.user.sex,
               username: data.user.default_email.split("@")[0],
               email: data.user.default_email,
-              dateOfBirth: data.user.brithdate,
+              dateOfBirth: new Date(data.user.birthday),
             });
           }
           setIsLoadingPage(false);
@@ -212,8 +213,14 @@ const AuthButton = (props) => {
           if (data.ok) {
             setUserInfo({
               ...data.user,
+              gender:
+                (data.user.gender &&
+                  (data.user.gender === "m" ? "male" : "female")) ||
+                null,
               username: data.user.email.split("@")[0],
-              dateOfBirth: data.user.brithdate,
+              dateOfBirth: new Date(
+                data.user.birthday.split(".").reverse().join("-")
+              ),
             });
           }
           setIsLoadingPage(false);
@@ -227,43 +234,81 @@ const AuthButton = (props) => {
     isLoadingPage && setIsLoadingPage(false);
     console.log(isLoadingPage);
 
-    if (userInfo && (userInfo.gender?.length === 0 || !userInfo.gender)) {
-      console.log(userInfo.gender);
-      setAdditionalInfo((prevInfo) => {
-        return { ...prevInfo, gender: true };
-      });
+    userInfo &&
+      fetch(`http://localhost:3001/api/users/${userInfo.username}/exists`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.ok && !data.isFound) {
+            setIsLoadingPage(false);
 
-      console.log("User needs to set gender");
-    }
+            if (
+              userInfo &&
+              (userInfo.gender?.length === 0 || !userInfo.gender)
+            ) {
+              console.log(userInfo.gender);
+              setAdditionalInfo((prevInfo) => {
+                return { ...prevInfo, gender: true };
+              });
 
-    if (userInfo && (!userInfo.birthday || userInfo.birthday.length === 0)) {
-      setAdditionalInfo((prevInfo) => {
-        return { ...prevInfo, dateOfBirth: true };
-      });
+              console.log("User needs to set gender");
+            }
 
-      console.log("User needs to set DOB");
-    }
+            if (
+              userInfo &&
+              (!userInfo.birthday || userInfo.birthday.length === 0)
+            ) {
+              setAdditionalInfo((prevInfo) => {
+                return { ...prevInfo, dateOfBirth: true };
+              });
 
-    if (userInfo && (!userInfo.city || userInfo.city.length === 0)) {
-      setAdditionalInfo((prevInfo) => {
-        return { ...prevInfo, city: true };
-      });
+              console.log("User needs to set DOB");
+            }
 
-      console.log("User needs to set city");
-    }
+            if (userInfo && (!userInfo.city || userInfo.city.length === 0)) {
+              setAdditionalInfo((prevInfo) => {
+                return { ...prevInfo, city: true };
+              });
 
-    if (userInfo && (!userInfo.region || userInfo.region.length === 0)) {
-      setAdditionalInfo((prevInfo) => {
-        return { ...prevInfo, region: true };
-      });
+              console.log("User needs to set city");
+            }
 
-      console.log("User needs to set region");
-    }
+            if (
+              userInfo &&
+              (!userInfo.region || userInfo.region.length === 0)
+            ) {
+              setAdditionalInfo((prevInfo) => {
+                return { ...prevInfo, region: true };
+              });
+
+              console.log("User needs to set region");
+            }
+          } else {
+            fetch("http://localhost:3001/api/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userEmail: userInfo.email,
+                userPassword: userInfo.password + "",
+                checkPassword: false,
+              }),
+              credentials: "include",
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.loggedIn) {
+                  dispatch(setUser(data.user));
+                  setTimeout(() => dispatch(logIn()), 0);
+                  setTimeout(() => navigate("/profile"), 1);
+                }
+              });
+          }
+        });
   }, [userInfo]);
 
   const registerUserHandler = async (additionalInfoObj) => {
     setIsLoadingRegistration(true);
     const userData = { ...userInfo, ...additionalInfoObj };
+    let userGender;
     const userObj = {
       username: userData.username,
       email: userData.email,
@@ -288,7 +333,8 @@ const AuthButton = (props) => {
 
     const data = await res.json();
 
-    if (data.ok) {
+    console.log(data);
+    if (data.ok || data.message.startsWith("This user")) {
       setAdditionalInfo({
         gender: false,
         email: false,
@@ -310,6 +356,7 @@ const AuthButton = (props) => {
         body: JSON.stringify({
           userEmail: userObj.email,
           userPassword: userObj.password + "",
+          checkPassword: false,
         }),
         credentials: "include",
       });
@@ -337,7 +384,35 @@ const AuthButton = (props) => {
 
   return (
     <>
-      {isLoadingRegistration && (
+      {isLoadingPage && !isLoadingRegistration && (
+        <Spinner
+          animation="border"
+          variant="primary"
+          role="status"
+          aria-hidden="true"
+          as="span"
+          style={{
+            position: "fixed",
+            top: "0",
+            left: "0",
+            right: "0",
+            bottom: "0",
+            margin: "auto",
+            zIndex: "15",
+            width: "5rem",
+            height: "5rem",
+          }}
+        />
+      )}
+
+      {isLoadingPage &&
+        !isLoadingRegistration &&
+        ReactDOM.createPortal(
+          <Overlay color="#fff" />,
+          document.querySelector("#overlay")
+        )}
+
+      {isLoadingRegistration && !isLoadingPage && (
         <Spinner
           animation="border"
           variant="light"
@@ -357,7 +432,6 @@ const AuthButton = (props) => {
           }}
         />
       )}
-
       {(additionalInfo.gender ||
         additionalInfo.email ||
         additionalInfo.dateOfBirth ||
@@ -369,6 +443,7 @@ const AuthButton = (props) => {
           <Overlay color="rgba(0, 0, 0, 0.30)" />,
           document.querySelector("#overlay")
         )}
+
       {(additionalInfo.gender ||
         additionalInfo.email ||
         additionalInfo.dateOfBirth ||
@@ -400,7 +475,6 @@ const AuthButton = (props) => {
             onRegisterUser={registerUserHandler}
           />
         )}
-
       <Button variant={props.variant} onClick={authUserHandler}>
         <img
           src={iconSrc}

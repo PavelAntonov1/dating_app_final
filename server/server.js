@@ -98,6 +98,38 @@ app.get("/api/mailru-data", (req, res) => {
 // USERS FUNCTIONALITY
 const { generateRandomUser } = require("./helpers/userDataGenerators");
 
+app.get("/api/users/:username/exists", async (req, res) => {
+  const username = req.params.username;
+
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      res.send({
+        ok: false,
+        message: `User ${username} not found`,
+        isFound: false,
+      });
+
+      return;
+    } else {
+      res.send({
+        ok: true,
+        message: `User ${username} found`,
+        isFound: true,
+      });
+
+      return;
+    }
+  } catch (err) {
+    res.send({
+      ok: false,
+      message: `Error finding user ${username}: ${err}`,
+      isFound: false,
+    });
+  }
+});
+
 app.post("/api/users/:username/delete", verifyToken, async (req, res) => {
   const username = req.params.username;
 
@@ -700,7 +732,7 @@ app.post(
 
 // LOGIN LOGOUT FUNCTIONALITY
 app.post("/api/login", async (req, res) => {
-  const { userEmail, userPassword } = req.body;
+  const { userEmail, userPassword, checkPassword = true } = req.body;
 
   try {
     const user = await User.findOne({ email: userEmail });
@@ -715,7 +747,15 @@ app.post("/api/login", async (req, res) => {
       return;
     }
 
-    const isMatch = await bcrypt.compare(userPassword, user.password);
+    let isMatch = true;
+
+    console.log(userEmail, userPassword, checkPassword);
+
+    if (checkPassword) {
+      isMatch = await bcrypt.compare(userPassword, user.password);
+    }
+
+    isMatch && console.log("Password and email match");
 
     if (isMatch) {
       const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
@@ -735,6 +775,7 @@ app.post("/api/login", async (req, res) => {
         ok: true,
         message: "User was found and logged in",
         loggedIn: true,
+        user,
       });
 
       return;
