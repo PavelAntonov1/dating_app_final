@@ -750,7 +750,7 @@ app.post("/api/login", async (req, res) => {
   } catch (err) {
     res.send({
       ok: false,
-      message: "Error finding the user",
+      message: `Error finding the user: ${err}`,
       loggedIn: false,
     });
   }
