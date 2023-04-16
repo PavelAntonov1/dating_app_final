@@ -440,36 +440,6 @@ const RegistrationForm = (props) => {
           >
             Зарегистрироваться
           </Button>
-
-          <div>
-            <span className="mb-1 d-inline-block">Регистрация Через:</span>
-
-            <div
-              className="w-100 d-flex flex-row justify-content-between"
-              style={{ columnGap: "1rem" }}
-            >
-              <AuthButton
-                value="Яндекс"
-                icon="yandex"
-                href=""
-                variant="outline-secondary"
-              />
-
-              <AuthButton
-                value="Mail.ru"
-                icon="mailru"
-                href=""
-                variant="outline-secondary"
-              />
-
-              <AuthButton
-                value="ВКонтакте"
-                icon="vk"
-                href=""
-                variant="outline-secondary"
-              />
-            </div>
-          </div>
         </Card>
       </Form>
     </>

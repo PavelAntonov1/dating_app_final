@@ -182,6 +182,8 @@ const AuthButton = (props) => {
     setTimeout(() => setIsLoadingPage(false), 2000);
   }, [service.clientId, service.clientSecret]);
 
+  console.log(service);
+
   useEffect(() => {
     console.log("Fetching user info: ");
     console.log(service);

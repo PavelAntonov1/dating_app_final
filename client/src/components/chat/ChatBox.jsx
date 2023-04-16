@@ -11,7 +11,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { Card } from "react-bootstrap";
 import { Spinner } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { transliterate } from 'transliteration';
+import { transliterate } from "transliteration";
 
 const ChatBox = (props) => {
   let params = useParams();
@@ -20,6 +20,8 @@ const ChatBox = (props) => {
   const [chatroom, setChatroom] = useState("");
   const [isLeaving, setIsLeaving] = useState(false);
   const [users, setUsers] = useState([]);
+
+  console.log(`Chatroom is: ${chatroom}`);
 
   console.log("users: ");
   console.log(users);
@@ -79,7 +81,7 @@ const ChatBox = (props) => {
 
           props.onStopLoadingChatbox();
         })
-        .catch((err) => console.error(err))
+        .catch((err) => console.error(err));
     } else {
       props.onStopLoadingChatbox();
     }
@@ -87,7 +89,7 @@ const ChatBox = (props) => {
 
   const changeFileHandler = async (e) => {
     const file = e.target.files[0];
-    e.target.value = '';
+    e.target.value = "";
 
     if (!file) return;
 

@@ -1,6 +1,6 @@
 import { Button, Card, Form } from "react-bootstrap";
 import { useRef, useState } from "react";
-
+import "./EmailVerificationForm.css";
 const EmailVerificationForm = (props) => {
   const verificationCodeRef = useRef();
 
@@ -38,7 +38,11 @@ const EmailVerificationForm = (props) => {
   };
 
   return (
-    <Form style={props.style} onSubmit={verificationCodeHandler}>
+    <Form
+      style={props.style}
+      onSubmit={verificationCodeHandler}
+      className="ver-form"
+    >
       <Card className="bg-white d-flex flex-column p-4 gap-4">
         <div className="d-flex justify-content-between">
           <Card.Title>Подтверждение E-mail</Card.Title>
