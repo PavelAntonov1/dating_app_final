@@ -15,7 +15,7 @@ const DeleteUsersForm = (props) => {
     setIsLoading(true);
 
     const res = await fetch(
-      `http://localhost:3001/api/users/${username}/delete`,
+      `https://flirt-dating.herokuapp.com/api/users/${username}/delete`,
       {
         method: "POST",
         headers: {

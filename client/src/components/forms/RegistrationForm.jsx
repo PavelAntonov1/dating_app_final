@@ -152,7 +152,7 @@ const RegistrationForm = (props) => {
     setIsLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:3001/api/send-verification-email`,
+        `https://flirt-dating.herokuapp.com/api/send-verification-email`,
         {
           method: "POST",
           headers: {

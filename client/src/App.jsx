@@ -32,7 +32,7 @@ const App = () => {
     console.log("Updating <App />");
 
     if (Cookies.get("jwt")) {
-      fetch("http://localhost:3001/api/user", {
+      fetch("https://flirt-dating.herokuapp.com/api/user", {
         headers: {
           Authorization: `Bearer ${Cookies.get("jwt")}`,
         },

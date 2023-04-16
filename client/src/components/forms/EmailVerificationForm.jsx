@@ -14,13 +14,16 @@ const EmailVerificationForm = (props) => {
     const userInputCode = verificationCodeRef.current.value.trim();
 
     try {
-      const res = await fetch("http://localhost:3001/api/verify-code", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code: userInputCode }),
-      });
+      const res = await fetch(
+        "https://flirt-dating.herokuapp.com/api/verify-code",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code: userInputCode }),
+        }
+      );
 
       if (res.ok) {
         const data = await res.json();

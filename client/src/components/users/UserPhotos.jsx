@@ -36,7 +36,7 @@ const UserPhotos = (props) => {
     formData.append("photo", photo);
 
     const res = await fetch(
-      `http://localhost:3001/api/users/${props.user._id}/photos`,
+      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/photos`,
       {
         method: "POST",
         headers: {
@@ -92,7 +92,7 @@ const UserPhotos = (props) => {
     }
 
     const res = await fetch(
-      `http://localhost:3001/api/users/${props.user._id}/photos/${selected}/delete`,
+      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/photos/${selected}/delete`,
       {
         method: "POST",
         headers: {

@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Cookies from "js-cookie";
 import { Spinner } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import {setUser} from "../../state/userActions.js";
+import { setUser } from "../../state/userActions.js";
 
 const DialogueList = (props) => {
   const params = useParams();
@@ -37,24 +37,33 @@ const DialogueList = (props) => {
 
     if (!username || username.length === 0) return;
 
-    const res = await fetch(`http://localhost:3001/api/dialogues/${user.email}/delete/${username}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${Cookies.get("jwt")}`,
-      },
-    })
+    const res = await fetch(
+      `https://flirt-dating.herokuapp.com/api/dialogues/${user.email}/delete/${username}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Cookies.get("jwt")}`,
+        },
+      }
+    );
 
     const data = await res.json();
 
     console.log(data);
 
     if (data.ok) {
-      dispatch(setUser({
-        ...user,
-        dialogueWith: user.dialogueWith.filter(id => id !== data.userDeletedId),
-      }));
+      dispatch(
+        setUser({
+          ...user,
+          dialogueWith: user.dialogueWith.filter(
+            (id) => id !== data.userDeletedId
+          ),
+        })
+      );
 
-      setUsers((users) => users.filter(user => user._id !== data.userDeletedId));
+      setUsers((users) =>
+        users.filter((user) => user._id !== data.userDeletedId)
+      );
       console.log(user);
     }
 
@@ -69,7 +78,7 @@ const DialogueList = (props) => {
     );
 
     setIsLoading(true);
-    fetch(`http://localhost:3001/api/dialogues/${user.username}`, {
+    fetch(`https://flirt-dating.herokuapp.com/api/dialogues/${user.username}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${Cookies.get("jwt")}`,
@@ -92,8 +101,8 @@ const DialogueList = (props) => {
   }, []);
 
   const goToUserHandler = (e, username) => {
-      navigate(`/profile/${username}`);
-  }
+    navigate(`/profile/${username}`);
+  };
 
   return (
     <Card
@@ -169,29 +178,31 @@ const DialogueList = (props) => {
                   </div>
 
                   <div className="d-flex gap-3">
-                  <div className="user-icon">
-                    <FaUser
-                      className={`trash-icon justify-self-end ${
-                        props.activeDialogue === userObj.username
-                        ? "text-white"
-                        : "text-muted"
-                      } mr-2`}
-                      style={{ cursor: "pointer", height: "2rem" }}
-                      onClick={(e) => goToUserHandler(e, userObj.username)}
+                    <div className="user-icon">
+                      <FaUser
+                        className={`trash-icon justify-self-end ${
+                          props.activeDialogue === userObj.username
+                            ? "text-white"
+                            : "text-muted"
+                        } mr-2`}
+                        style={{ cursor: "pointer", height: "2rem" }}
+                        onClick={(e) => goToUserHandler(e, userObj.username)}
                       />
-                  </div>
-                  <div className="trash-icon">
-                    <FaTrash
-                      className={`trash-icon justify-self-end ${
-                        props.activeDialogue === userObj.username
-                        ? "text-white"
-                        : "text-muted"
-                      } mr-2`}
-                      style={{ cursor: "pointer", height: "2rem" }}
-                      onClick={(e) => dialogueDeletionHandler(e, userObj.username)}
+                    </div>
+                    <div className="trash-icon">
+                      <FaTrash
+                        className={`trash-icon justify-self-end ${
+                          props.activeDialogue === userObj.username
+                            ? "text-white"
+                            : "text-muted"
+                        } mr-2`}
+                        style={{ cursor: "pointer", height: "2rem" }}
+                        onClick={(e) =>
+                          dialogueDeletionHandler(e, userObj.username)
+                        }
                       />
+                    </div>
                   </div>
-                </div>
                 </ListGroup.Item>
               )
           )}

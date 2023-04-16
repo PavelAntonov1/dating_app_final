@@ -57,7 +57,7 @@ const AboutUser = (props) => {
     };
 
     const res = await fetch(
-      `http://localhost:3001/api/users/${props.user.username}/info`,
+      `https://flirt-dating.herokuapp.com/api/users/${props.user.username}/info`,
       {
         method: "POST",
         headers: {

@@ -12,7 +12,7 @@ const NewUsers = (props) => {
   useEffect(() => {
     setIsLoading(true);
 
-    fetch(`http://localhost:3001/api/new-users/${username}`, {
+    fetch(`https://flirt-dating.herokuapp.com/api/new-users/${username}`, {
       headers: { Authorization: `Bearer: ${Cookies.get("jwt")}}` },
     })
       .then((res) => res.json())

@@ -54,7 +54,7 @@ const AuthButton = (props) => {
 
   useEffect(() => {
     if (service.serviceName === "yandex") {
-      fetch("http://localhost:3001/api/yandex-data")
+      fetch("https://flirt-dating.herokuapp.com/api/yandex-data")
         .then((res) => {
           if (res.ok) {
             return res.json();
@@ -79,7 +79,7 @@ const AuthButton = (props) => {
     }
 
     if (service.serviceName === "mailru") {
-      fetch("http://localhost:3001/api/mailru-data")
+      fetch("https://flirt-dating.herokuapp.com/api/mailru-data")
         .then((res) => {
           if (res.ok) {
             return res.json();
@@ -166,7 +166,9 @@ const AuthButton = (props) => {
       service.clientSecret &&
       service.serviceName === "mailru"
     ) {
-      fetch(`http://localhost:3001/api/mailru/accessToken/${authCode}`)
+      fetch(
+        `https://flirt-dating.herokuapp.com/api/mailru/accessToken/${authCode}`
+      )
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
@@ -189,7 +191,9 @@ const AuthButton = (props) => {
     console.log(service);
 
     if (service.accessToken && service.serviceName === "yandex") {
-      fetch(`http://localhost:3001/api/yandex/user/${service.accessToken}`)
+      fetch(
+        `https://flirt-dating.herokuapp.com/api/yandex/user/${service.accessToken}`
+      )
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
@@ -208,7 +212,9 @@ const AuthButton = (props) => {
     }
 
     if (service.accessToken && service.serviceName === "mailru") {
-      fetch(`http://localhost:3001/api/mailru/user/${service.accessToken}`)
+      fetch(
+        `https://flirt-dating.herokuapp.com/api/mailru/user/${service.accessToken}`
+      )
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
@@ -237,7 +243,9 @@ const AuthButton = (props) => {
     console.log(isLoadingPage);
 
     userInfo &&
-      fetch(`http://localhost:3001/api/users/${userInfo.username}/exists`)
+      fetch(
+        `https://flirt-dating.herokuapp.com/api/users/${userInfo.username}/exists`
+      )
         .then((res) => res.json())
         .then((data) => {
           if (!data.ok && !data.isFound) {
@@ -285,7 +293,7 @@ const AuthButton = (props) => {
               console.log("User needs to set region");
             }
           } else {
-            fetch("http://localhost:3001/api/login", {
+            fetch("https://flirt-dating.herokuapp.com/api/login", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -327,7 +335,7 @@ const AuthButton = (props) => {
       photos: null,
     };
 
-    const res = await fetch("http://localhost:3001/api/users", {
+    const res = await fetch("https://flirt-dating.herokuapp.com/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userObj }),
@@ -352,16 +360,19 @@ const AuthButton = (props) => {
         serviceName: props.icon,
       });
 
-      const response = await fetch("http://localhost:3001/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userEmail: userObj.email,
-          userPassword: userObj.password + "",
-          checkPassword: false,
-        }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        "https://flirt-dating.herokuapp.com/api/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userEmail: userObj.email,
+            userPassword: userObj.password + "",
+            checkPassword: false,
+          }),
+          credentials: "include",
+        }
+      );
 
       console.log(response);
       if (response.ok) {

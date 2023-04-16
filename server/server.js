@@ -22,7 +22,7 @@ const bcrypt = require("bcrypt");
 
 const fetch = require("node-fetch");
 
-require("dotenv").config({ path: "../.env" });
+// require("dotenv").config({ path: "../.env" });
 
 const {
   MAILRU_EMAIL,
@@ -45,7 +45,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://flirt-dating.herokuapp.com",
   optionSuccessStatus: 200,
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -67,7 +67,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("client")); // change to public
+app.use(express.static("public")); // change to public
 
 let verificationCode = "";
 
@@ -168,7 +168,7 @@ app.get("/api/mailru/accessToken/:authCode", async (req, res) => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `grant_type=authorization_code&code=${authCode}&client_id=${MAILRU_CLIENT_ID}&client_secret=${MAILRU_CLIENT_SECRET}&redirect_uri=http://localhost:3000/homepage`,
+      body: `grant_type=authorization_code&code=${authCode}&client_id=${MAILRU_CLIENT_ID}&client_secret=${MAILRU_CLIENT_SECRET}&redirect_uri=https://flirt-dating.herokuapp.com/homepage`,
     });
 
     const data = await response.json();
@@ -768,7 +768,10 @@ app.post("/api/login", async (req, res) => {
         sameSite: false,
       });
 
-      res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+      res.setHeader(
+        "Access-Control-Allow-Origin",
+        "https://flirt-dating.herokuapp.com"
+      );
       res.setHeader("Access-Control-Allow-Credentials", true);
 
       res.send({

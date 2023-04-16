@@ -19,7 +19,7 @@ const AdminPage = () => {
   const [femaleBots, setFemaleBots] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/users/real", {
+    fetch("https://flirt-dating.herokuapp.com/api/users/real", {
       headers: {
         Authorization: `Bearer ${Cookies.get("jwt")}`,
       },
@@ -34,7 +34,7 @@ const AdminPage = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/users/bots", {
+    fetch("https://flirt-dating.herokuapp.com/api/users/bots", {
       headers: {
         Authorization: `Bearer ${Cookies.get("jwt")}`,
       },

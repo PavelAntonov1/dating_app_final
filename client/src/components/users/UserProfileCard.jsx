@@ -35,7 +35,7 @@ const UserProfileCard = (props) => {
 
   const logOutHandler = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/logout", {
+      const res = await fetch("https://flirt-dating.herokuapp.com/api/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -71,7 +71,7 @@ const UserProfileCard = (props) => {
     }
 
     const res = await fetch(
-      `http://localhost:3001/api/users/${props.user._id}/profilePicture/delete`,
+      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/profilePicture/delete`,
       {
         method: "POST",
         headers: {
@@ -114,7 +114,7 @@ const UserProfileCard = (props) => {
     formData.append("profilePicture", profilePicture);
 
     const res = await fetch(
-      `http://localhost:3001/api/users/${props.user._id}/profilePicture`,
+      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/profilePicture`,
       {
         method: "POST",
         headers: {
@@ -152,7 +152,7 @@ const UserProfileCard = (props) => {
 
   const messageUserHandler = async () => {
     const res = await fetch(
-      `http://localhost:3001/api/dialogues/${params.username}`,
+      `https://flirt-dating.herokuapp.com/api/dialogues/${params.username}`,
       {
         method: "POST",
         headers: {

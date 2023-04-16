@@ -1,0 +1,23 @@
+{
+  "name": "php2js",
+  "version": "1.0.0",
+  "description": "php2js contains common function of php that are useful in javscript aswell additions are welcome",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "na"
+  },
+  "keywords": [
+    "php",
+    "javascript",
+    "url",
+    "encoding",
+    "jwplayer",
+    "dependencies"
+  ],
+  "author": "Sahil Sharma",
+  "license": "ISC"
+}

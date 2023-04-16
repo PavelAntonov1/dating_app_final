@@ -28,7 +28,7 @@ const LoginForm = () => {
     dispatch(setLoading(true));
 
     try {
-      const res = await fetch("http://localhost:3001/api/login", {
+      const res = await fetch("https://flirt-dating.herokuapp.com/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userEmail, userPassword }),
@@ -42,11 +42,14 @@ const LoginForm = () => {
 
         if (data.loggedIn) {
           if (Cookies.get("jwt")) {
-            const res = await fetch("http://localhost:3001/api/user", {
-              headers: {
-                Authorization: `Bearer ${Cookies.get("jwt")}`,
-              },
-            });
+            const res = await fetch(
+              "https://flirt-dating.herokuapp.com/api/user",
+              {
+                headers: {
+                  Authorization: `Bearer ${Cookies.get("jwt")}`,
+                },
+              }
+            );
 
             const userData = (await res.json()).user;
 

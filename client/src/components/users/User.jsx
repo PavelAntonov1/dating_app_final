@@ -43,7 +43,7 @@ const User = (props) => {
     setIsLoading(true);
 
     const res = await fetch(
-      `http://localhost:3001/api/dialogues/${props.username}`,
+      `https://flirt-dating.herokuapp.com/api/dialogues/${props.username}`,
       {
         method: "POST",
         headers: {

@@ -38,14 +38,17 @@ const SearchPage = (props) => {
 
   const filterUsersHandler = (options) => {
     setIsLoading(true);
-    fetch(`http://localhost:3001/api/users/filtered?page=${page + 1}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${Cookies.get("jwt")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ options }),
-    })
+    fetch(
+      `https://flirt-dating.herokuapp.com/api/users/filtered?page=${page + 1}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Cookies.get("jwt")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ options }),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -67,7 +70,7 @@ const SearchPage = (props) => {
     setIsLoading(true);
 
     !isFiltered &&
-      fetch(`http://localhost:3001/api/users?page=${page + 1}`, {
+      fetch(`https://flirt-dating.herokuapp.com/api/users?page=${page + 1}`, {
         headers: {
           Authorization: `Bearer ${Cookies.get("jwt")}`,
         },

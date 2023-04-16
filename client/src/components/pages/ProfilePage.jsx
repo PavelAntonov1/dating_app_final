@@ -19,7 +19,7 @@ const ProfilePage = (props) => {
     console.log("Updating <ProfilePage />");
 
     if (!props.isClient) {
-      fetch(`http://localhost:3001/api/users/${params.username}`)
+      fetch(`https://flirt-dating.herokuapp.com/api/users/${params.username}`)
         .then((res) => res.json())
         .then((data) => {
           console.log(data);

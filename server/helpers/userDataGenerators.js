@@ -1,7 +1,9 @@
-const { faker } = require("@faker-js/faker");
 const crypto = require("crypto");
 const axios = require("axios");
 const sharp = require("sharp");
+const { faker } = require("@faker-js/faker");
+
+// faker
 
 const citiesRegions = require("../data/citiesRegions.json");
 const maleNames = require("../data/maleNames.json");

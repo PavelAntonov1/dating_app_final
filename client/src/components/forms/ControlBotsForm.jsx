@@ -14,7 +14,7 @@ const ControlBotsForm = (props) => {
 
     setIsLoading(true);
     const res = await fetch(
-      `http://localhost:3001/api/users/generate/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
+      `https://flirt-dating.herokuapp.com/api/users/generate/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
       {
         method: "POST",
         headers: {
@@ -50,7 +50,7 @@ const ControlBotsForm = (props) => {
 
     setIsLoading(true);
     const res = await fetch(
-      `http://localhost:3001/api/users/delete/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
+      `https://flirt-dating.herokuapp.com/api/users/delete/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
       {
         method: "POST",
         headers: {
