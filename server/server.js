@@ -21,8 +21,9 @@ const sharp = require("sharp");
 const bcrypt = require("bcrypt");
 
 const fetch = require("node-fetch");
+const path = require("path");
 
-// require("dotenv").config({ path: "../.env" });
+require("dotenv").config({ path: "../.env" });
 
 const {
   MAILRU_EMAIL,
@@ -45,7 +46,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 const corsOptions = {
-  origin: "https://flirt-dating.herokuapp.com",
+  origin: "http://localhost:3000",
   optionSuccessStatus: 200,
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -67,7 +68,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public")); // change to public
+app.use(express.static("client")); // change to public
 
 let verificationCode = "";
 
@@ -530,14 +531,15 @@ app.get("/api/new-users/:username", async (req, res) => {
 
   const users = await User.find({
     username: {
-      $ne: username,
       $not: /^.*admin.*$/i,
     },
     createdAt: {
       $gte: new Date(`${currentYear}-${currentMonth}-01`),
       $lte: new Date(`${currentYear}-${currentMonth + 1}-01`),
     },
-  }).limit(6);
+  })
+    .sort({ createdAt: "desc" })
+    .limit(6);
 
   try {
     res.send({
@@ -547,6 +549,34 @@ app.get("/api/new-users/:username", async (req, res) => {
     });
   } catch (err) {
     res.send({ ok: false, message: "Could not get users from the database" });
+  }
+});
+
+app.get("/api/users/:username/photos", verifyToken, async (req, res) => {
+  const { username } = req.params;
+
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      res.send({
+        ok: false,
+        message: `User ${username} not found`,
+      });
+
+      return;
+    }
+
+    res.send({
+      ok: true,
+      message: "User photos fetched successfully",
+      photos: user.photos,
+    });
+  } catch (err) {
+    res.send({
+      ok: false,
+      message: `Error while fetching user photos: ${err}`,
+    });
   }
 });
 
@@ -768,10 +798,7 @@ app.post("/api/login", async (req, res) => {
         sameSite: false,
       });
 
-      res.setHeader(
-        "Access-Control-Allow-Origin",
-        "https://flirt-dating.herokuapp.com"
-      );
+      res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
       res.setHeader("Access-Control-Allow-Credentials", true);
 
       res.send({
@@ -912,11 +939,13 @@ app.post(
 
       user.dialogueWith = usersList
         .filter((user) => {
-          if (user.username == username) {
-            userDeleted = user;
-          }
+          if (user) {
+            if (user.username == username) {
+              userDeleted = user;
+            }
 
-          return user && user.username !== username;
+            return user && user.username !== username;
+          }
         })
         .map((user) => user._id);
 
@@ -1249,6 +1278,10 @@ app.get("/api/users-inside/:chatroom", verifyToken, async (req, res) => {
       users: null,
     });
   }
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(PORT, () => {

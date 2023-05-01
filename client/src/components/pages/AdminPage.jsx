@@ -6,6 +6,7 @@ import DeleteUsersForm from "../forms/DeleteUserForm.jsx";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import "./AdminPage.css";
+import { serverName } from "../../config.js";
 
 const AdminPage = () => {
   const user = useSelector((state) => state.user.user);
@@ -19,7 +20,7 @@ const AdminPage = () => {
   const [femaleBots, setFemaleBots] = useState(0);
 
   useEffect(() => {
-    fetch("https://flirt-dating.herokuapp.com/api/users/real", {
+    fetch("${serverName}/api/users/real", {
       headers: {
         Authorization: `Bearer ${Cookies.get("jwt")}`,
       },
@@ -34,7 +35,7 @@ const AdminPage = () => {
   }, []);
 
   useEffect(() => {
-    fetch("https://flirt-dating.herokuapp.com/api/users/bots", {
+    fetch("${serverName}/api/users/bots", {
       headers: {
         Authorization: `Bearer ${Cookies.get("jwt")}`,
       },

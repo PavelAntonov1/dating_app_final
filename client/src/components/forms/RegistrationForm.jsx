@@ -7,7 +7,7 @@ import EmailVerificationForm from "./EmailVerificationForm";
 import { useDispatch } from "react-redux";
 import { setUser, logIn, setError } from "../../state/userActions";
 import { useNavigate } from "react-router-dom";
-
+import { serverName } from "../../config";
 import "./RegistrationForm.css";
 
 const regions = [...new Set(citiesRegions.map((obj) => obj.region))];
@@ -151,16 +151,13 @@ const RegistrationForm = (props) => {
 
     setIsLoading(true);
     try {
-      const res = await fetch(
-        `https://flirt-dating.herokuapp.com/api/send-verification-email`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userEmail }),
-        }
-      );
+      const res = await fetch(`${serverName}/api/send-verification-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userEmail }),
+      });
 
       const data = await res.json();
 
@@ -204,7 +201,7 @@ const RegistrationForm = (props) => {
         photos,
       };
 
-      const res = await fetch("http://localhost:3001/api/users", {
+      const res = await fetch(`${serverName}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userObj }),
@@ -217,7 +214,7 @@ const RegistrationForm = (props) => {
         props.onHideRegistrationForm();
         dispatch(setUser(data.user));
 
-        const res = await fetch("http://localhost:3001/api/login", {
+        const res = await fetch(`${serverName}/api/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

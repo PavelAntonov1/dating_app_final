@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
 import { useRef, useState } from "react";
 import { Card, Form, Button, Alert, Spinner } from "react-bootstrap";
+import { serverName } from "../../config";
+
 const DeleteUsersForm = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState({ success: false, message: null });
@@ -14,15 +16,12 @@ const DeleteUsersForm = (props) => {
 
     setIsLoading(true);
 
-    const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/users/${username}/delete`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("jwt")}`,
-        },
-      }
-    );
+    const res = await fetch(`${serverName}/api/users/${username}/delete`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("jwt")}`,
+      },
+    });
 
     const data = await res.json();
 

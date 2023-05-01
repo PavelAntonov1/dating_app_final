@@ -6,6 +6,7 @@ import UserPhotos from "../users/UserPhotos";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "./ProfilePage.css";
+import { serverName } from "../../config";
 
 const ProfilePage = (props) => {
   const params = useParams();
@@ -19,7 +20,7 @@ const ProfilePage = (props) => {
     console.log("Updating <ProfilePage />");
 
     if (!props.isClient) {
-      fetch(`https://flirt-dating.herokuapp.com/api/users/${params.username}`)
+      fetch(`${serverName}/api/users/${params.username}`)
         .then((res) => res.json())
         .then((data) => {
           console.log(data);

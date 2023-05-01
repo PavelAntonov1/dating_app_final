@@ -31,7 +31,7 @@ const Message = (props) => {
     <Card
       className={`message d-inline-block shadow-sm p-3 ${
         props.belongsToUser ? "align-self-end" : "align-self-start"
-      } ${props.belongsToUser && "bg-primary"} ${
+      } ${props.belongsToUser && "bg-secondary"} ${
         props.belongsToUser && "text-white"
       }`}
     >

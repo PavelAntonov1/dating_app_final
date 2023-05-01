@@ -1,0 +1,25 @@
+{
+  "name": "dating_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"cd client && npm start\" \"cd server && npm start\""
+  },
+  "author": "Pavel Antonov",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "dependencies": {
+    "install": "^0.13.0",
+    "jwplayer": "^1.0.3",
+    "npm": "^9.6.4",
+    "plyr": "^3.7.8",
+    "react-bootstrap": "^2.7.2",
+    "react-player": "^2.12.0",
+    "react-plyr": "^2.2.0",
+    "transliteration": "^2.3.5",
+    "use-socket.io-client": "^1.1.0"
+  }
+}

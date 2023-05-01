@@ -2,6 +2,7 @@ import User from "./User";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
+import { serverName } from "../../config";
 
 const NewUsers = (props) => {
   const [usersList, setUsersList] = useState([]);
@@ -12,12 +13,13 @@ const NewUsers = (props) => {
   useEffect(() => {
     setIsLoading(true);
 
-    fetch(`https://flirt-dating.herokuapp.com/api/new-users/${username}`, {
+    fetch(`${serverName}/api/new-users/${username}`, {
       headers: { Authorization: `Bearer: ${Cookies.get("jwt")}}` },
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        console.log(`${serverName}/api/new-users/${username}`);
         setUsersList(data.users);
       })
       .catch((err) => console.error(err));

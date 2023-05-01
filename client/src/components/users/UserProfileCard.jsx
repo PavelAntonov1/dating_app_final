@@ -11,6 +11,7 @@ import FileButton from "../buttons/FileButton";
 import { useParams } from "react-router-dom";
 import { FaComment } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { serverName } from "../../config";
 
 const UserProfileCard = (props) => {
   const dispatch = useDispatch();
@@ -35,7 +36,7 @@ const UserProfileCard = (props) => {
 
   const logOutHandler = async () => {
     try {
-      const res = await fetch("https://flirt-dating.herokuapp.com/api/logout", {
+      const res = await fetch(`${serverName}/api/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -71,7 +72,7 @@ const UserProfileCard = (props) => {
     }
 
     const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/profilePicture/delete`,
+      `${serverName}/api/users/${props.user._id}/profilePicture/delete`,
       {
         method: "POST",
         headers: {
@@ -114,7 +115,7 @@ const UserProfileCard = (props) => {
     formData.append("profilePicture", profilePicture);
 
     const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/profilePicture`,
+      `${serverName}/api/users/${props.user._id}/profilePicture`,
       {
         method: "POST",
         headers: {
@@ -151,17 +152,14 @@ const UserProfileCard = (props) => {
   };
 
   const messageUserHandler = async () => {
-    const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/dialogues/${params.username}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("jwt")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ usernameClient: user.username }),
-      }
-    );
+    const res = await fetch(`${serverName}/api/dialogues/${params.username}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("jwt")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ usernameClient: user.username }),
+    });
 
     const data = await res.json();
 

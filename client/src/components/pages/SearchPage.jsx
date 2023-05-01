@@ -15,6 +15,7 @@ import User from "../users/User";
 import "./SearchPage.css";
 import { useSelector } from "react-redux";
 import { json } from "react-router-dom";
+import { serverName } from "../../config";
 
 const SearchPage = (props) => {
   const [users, setUsers] = useState([]);
@@ -38,17 +39,14 @@ const SearchPage = (props) => {
 
   const filterUsersHandler = (options) => {
     setIsLoading(true);
-    fetch(
-      `https://flirt-dating.herokuapp.com/api/users/filtered?page=${page + 1}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("jwt")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ options }),
-      }
-    )
+    fetch(`${serverName}/api/users/filtered?page=${page + 1}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("jwt")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ options }),
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
@@ -70,7 +68,7 @@ const SearchPage = (props) => {
     setIsLoading(true);
 
     !isFiltered &&
-      fetch(`https://flirt-dating.herokuapp.com/api/users?page=${page + 1}`, {
+      fetch(`${serverName}/api/users?page=${page + 1}`, {
         headers: {
           Authorization: `Bearer ${Cookies.get("jwt")}`,
         },

@@ -12,6 +12,7 @@ import { Card } from "react-bootstrap";
 import { Spinner } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { transliterate } from "transliteration";
+import { serverName } from "../../config";
 
 const ChatBox = (props) => {
   let params = useParams();
@@ -31,11 +32,11 @@ const ChatBox = (props) => {
 
     let chatroomName = "";
 
-    if (user.username.localeCompare(withUser) === 1) {
-      chatroomName = `${user.username}-${withUser}`;
+    if (transliterate(user.username).localeCompare(withUser) === 1) {
+      chatroomName = `${transliterate(user.username)}-${withUser}`;
     }
-    if (user.username.localeCompare(withUser) === -1) {
-      chatroomName = `${withUser}-${user.username}`;
+    if (transliterate(user.username).localeCompare(withUser) === -1) {
+      chatroomName = `${withUser}-${transliterate(user.username)}`;
     }
 
     setChatroom(chatroomName);
@@ -61,7 +62,7 @@ const ChatBox = (props) => {
       withUser !== "select" &&
       chatroom.length > 0
     ) {
-      fetch(`https://flirt-dating.herokuapp.com/api/messages/${chatroom}`, {
+      fetch(`${serverName}/api/messages/${chatroom}`, {
         headers: { Authorization: `Bearer ${Cookies.get("jwt")}` },
       })
         .then((res) => {
@@ -139,17 +140,14 @@ const ChatBox = (props) => {
       return;
     }
 
-    const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/join/${chatroom}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("jwt")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user: user.username }),
-      }
-    );
+    const res = await fetch(`${serverName}/api/join/${chatroom}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("jwt")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ user: user.username }),
+    });
 
     const data = await res.json();
 
@@ -157,17 +155,14 @@ const ChatBox = (props) => {
   };
 
   const leaveHandler = async () => {
-    const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/leave/${chatroom}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("jwt")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user: user.username }),
-      }
-    );
+    const res = await fetch(`${serverName}/api/leave/${chatroom}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("jwt")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ user: user.username }),
+    });
 
     const data = await res.json();
 
@@ -180,7 +175,7 @@ const ChatBox = (props) => {
     // joining the user to the chatroom
     joinHandler();
 
-    fetch(`https://flirt-dating.herokuapp.com/api/users-inside/${chatroom}`, {
+    fetch(`${serverName}/api/users-inside/${chatroom}`, {
       headers: {
         Authorization: `Bearer ${Cookies.get("jwt")}`,
       },
@@ -283,16 +278,13 @@ const ChatBox = (props) => {
         newMessage.readByRecipent = false;
       }
 
-      const res = await fetch(
-        `https://flirt-dating.herokuapp.com/api/messages/${chatroom}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${Cookies.get("jwt")}`,
-          },
-          body: formData,
-        }
-      );
+      const res = await fetch(`${serverName}/api/messages/${chatroom}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Cookies.get("jwt")}`,
+        },
+        body: formData,
+      });
 
       const data = await res.json();
 

@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { Spinner } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import { setUser } from "../../state/userActions.js";
+import { serverName } from "../../config";
 
 const DialogueList = (props) => {
   const params = useParams();
@@ -37,8 +38,9 @@ const DialogueList = (props) => {
 
     if (!username || username.length === 0) return;
 
+    console.log(`${serverName}/api/dialogues/${user.email}/delete/${username}`);
     const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/dialogues/${user.email}/delete/${username}`,
+      `${serverName}/api/dialogues/${user.email}/delete/${username}`,
       {
         method: "POST",
         headers: {
@@ -62,7 +64,9 @@ const DialogueList = (props) => {
       );
 
       setUsers((users) =>
-        users.filter((user) => user._id !== data.userDeletedId)
+        users.filter((user) => {
+          if (user) return user._id !== data.userDeletedId;
+        })
       );
       console.log(user);
     }
@@ -78,7 +82,7 @@ const DialogueList = (props) => {
     );
 
     setIsLoading(true);
-    fetch(`https://flirt-dating.herokuapp.com/api/dialogues/${user.username}`, {
+    fetch(`${serverName}/api/dialogues/${user.username}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${Cookies.get("jwt")}`,
@@ -145,9 +149,11 @@ const DialogueList = (props) => {
             (userObj, i) =>
               userObj && (
                 <ListGroup.Item
-                  className="d-flex gap-3 border align-items-center justify-content-between w-100 p-3"
+                  className={`d-flex gap-3 border align-items-center justify-content-between w-100 p-3 ${
+                    props.activeDialogue === userObj.username &&
+                    "list-group-item-secondary"
+                  }`}
                   style={{ cursor: "pointer" }}
-                  active={props.activeDialogue === userObj.username}
                   onClick={(e) => switchDialogueHandler(e, userObj.username)}
                   key={userObj._id}
                 >
@@ -180,22 +186,14 @@ const DialogueList = (props) => {
                   <div className="d-flex gap-3">
                     <div className="user-icon">
                       <FaUser
-                        className={`trash-icon justify-self-end ${
-                          props.activeDialogue === userObj.username
-                            ? "text-white"
-                            : "text-muted"
-                        } mr-2`}
+                        className={`trash-icon justify-self-end mr-2`}
                         style={{ cursor: "pointer", height: "2rem" }}
                         onClick={(e) => goToUserHandler(e, userObj.username)}
                       />
                     </div>
                     <div className="trash-icon">
                       <FaTrash
-                        className={`trash-icon justify-self-end ${
-                          props.activeDialogue === userObj.username
-                            ? "text-white"
-                            : "text-muted"
-                        } mr-2`}
+                        className={`trash-icon justify-self-end mr-2`}
                         style={{ cursor: "pointer", height: "2rem" }}
                         onClick={(e) =>
                           dialogueDeletionHandler(e, userObj.username)

@@ -2,7 +2,7 @@ import AuthButton from "../buttons/AuthButton";
 import { Alert, Button, Form } from "react-bootstrap";
 import { Card } from "react-bootstrap";
 import { useRef } from "react";
-
+import { serverName } from "../../config";
 import Cookies from "js-cookie";
 
 import { useDispatch } from "react-redux";
@@ -28,7 +28,7 @@ const LoginForm = () => {
     dispatch(setLoading(true));
 
     try {
-      const res = await fetch("https://flirt-dating.herokuapp.com/api/login", {
+      const res = await fetch(`${serverName}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userEmail, userPassword }),
@@ -42,14 +42,11 @@ const LoginForm = () => {
 
         if (data.loggedIn) {
           if (Cookies.get("jwt")) {
-            const res = await fetch(
-              "https://flirt-dating.herokuapp.com/api/user",
-              {
-                headers: {
-                  Authorization: `Bearer ${Cookies.get("jwt")}`,
-                },
-              }
-            );
+            const res = await fetch(`${serverName}/api/user`, {
+              headers: {
+                Authorization: `Bearer ${Cookies.get("jwt")}`,
+              },
+            });
 
             const userData = (await res.json()).user;
 

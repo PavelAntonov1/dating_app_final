@@ -1,6 +1,7 @@
 import { Button, Card, Form } from "react-bootstrap";
 import { useRef, useState } from "react";
 import "./EmailVerificationForm.css";
+import { serverName } from "../../config";
 const EmailVerificationForm = (props) => {
   const verificationCodeRef = useRef();
 
@@ -14,16 +15,13 @@ const EmailVerificationForm = (props) => {
     const userInputCode = verificationCodeRef.current.value.trim();
 
     try {
-      const res = await fetch(
-        "https://flirt-dating.herokuapp.com/api/verify-code",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ code: userInputCode }),
-        }
-      );
+      const res = await fetch(`${serverName}/api/verify-code`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: userInputCode }),
+      });
 
       if (res.ok) {
         const data = await res.json();

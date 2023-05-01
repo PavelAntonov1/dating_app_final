@@ -1,6 +1,7 @@
 import { Card, Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useRef, useState } from "react";
 import Cookies from "js-cookie";
+import { serverName } from "../../config";
 
 const ControlBotsForm = (props) => {
   const quantityMaleRef = useRef();
@@ -14,7 +15,7 @@ const ControlBotsForm = (props) => {
 
     setIsLoading(true);
     const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/users/generate/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
+      `${serverName}/api/users/generate/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
       {
         method: "POST",
         headers: {
@@ -50,7 +51,7 @@ const ControlBotsForm = (props) => {
 
     setIsLoading(true);
     const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/users/delete/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
+      `${serverName}/api/users/delete/${quantityMaleRef.current.value}/${quantityFemaleRef.current.value}`,
       {
         method: "POST",
         headers: {

@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import Overlay from "../overlay/Overlay";
 import ReactDOM from "react-dom";
 import { Spinner } from "react-bootstrap";
+import { serverName } from "../../config";
 
 const User = (props) => {
   const navigate = useNavigate();
@@ -28,7 +29,11 @@ const User = (props) => {
 
     console.log(e.target);
     if (e.target.classList.contains("clickable")) {
-      navigate(`/profile/${props.username}`);
+      if (props.username === user.username) {
+        navigate("/profile");
+      } else {
+        navigate(`/profile/${props.username}`);
+      }
     }
   };
 
@@ -42,17 +47,14 @@ const User = (props) => {
 
     setIsLoading(true);
 
-    const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/dialogues/${props.username}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${Cookies.get("jwt")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ usernameClient: user.username }),
-      }
-    );
+    const res = await fetch(`${serverName}/api/dialogues/${props.username}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Cookies.get("jwt")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ usernameClient: user.username }),
+    });
 
     const data = await res.json();
 
@@ -108,14 +110,16 @@ const User = (props) => {
         </div>
       </div>
 
-      <Button
-        variant={props.long ? "success" : "secondary"}
-        className="p-0 px-2 align-self-end mt-2 d-flex p-2 gap-2 align-items-center"
-        onClick={messageUserHandler}
-      >
-        <FaComment style={{ color: "#fff" }} />
-        {props.long && "Написать Сообщение"}
-      </Button>
+      {props.username !== user?.username && (
+        <Button
+          variant={props.long ? "success" : "secondary"}
+          className="p-0 px-2 align-self-end mt-2 d-flex p-2 gap-2 align-items-center"
+          onClick={messageUserHandler}
+        >
+          <FaComment style={{ color: "#fff" }} />
+          {props.long && "Написать Сообщение"}
+        </Button>
+      )}
     </Card>
   );
 

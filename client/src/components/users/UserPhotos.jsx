@@ -5,6 +5,7 @@ import FileButton from "../buttons/FileButton";
 import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../state/userActions";
+import { serverName } from "../../config";
 
 const UserPhotos = (props) => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const UserPhotos = (props) => {
     formData.append("photo", photo);
 
     const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/photos`,
+      `${serverName}/api/users/${props.user._id}/photos`,
       {
         method: "POST",
         headers: {
@@ -92,7 +93,7 @@ const UserPhotos = (props) => {
     }
 
     const res = await fetch(
-      `https://flirt-dating.herokuapp.com/api/users/${props.user._id}/photos/${selected}/delete`,
+      `${serverName}/api/users/${props.user._id}/photos/${selected}/delete`,
       {
         method: "POST",
         headers: {
@@ -118,32 +119,63 @@ const UserPhotos = (props) => {
   };
 
   useEffect(() => {
-    console.log(props.photos);
+    console.log(props.user.username);
+    fetch(`${serverName}/api/users/${props.user.username}/photos`, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("jwt")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
 
-    if (props.photos.length === 0 || !props.photos) {
-      setPhotos(null);
-      return;
-    }
+        if (data.ok) {
+          if (data.photos.length === 0 || !data.photos) {
+            setPhotos([]);
+          }
 
-    setIsLoading(true);
-    setPhotos(
-      props.photos.map((photo) => {
-        console.log(photo);
+          const photosNew = data.photos.map((photo) => {
+            const bufferArr = photo.data.data;
 
-        if (!photo.data) {
-          return { _id: photo._id, src: photo.src };
+            const blob = new Blob([new Uint8Array(bufferArr)], {
+              type: photo.contentType,
+            });
+
+            return { _id: photo._id, src: URL.createObjectURL(blob) };
+          });
+
+          if (photosNew.length > 0) {
+            setPhotos(photosNew);
+          } else {
+            setPhotos([]);
+          }
         }
-        const bufferArr = photo.data.data;
+      });
 
-        const blob = new Blob([new Uint8Array(bufferArr)], {
-          type: photo.contentType,
-        });
+    // if (props.photos.length === 0 || !props.photos) {
+    //   setPhotos(null);
+    //   return;
+    // }
 
-        return { _id: photo._id, src: URL.createObjectURL(blob) }; // here
-      })
-    );
-    setIsLoading(false);
-  }, [props.photos, props.isClient]);
+    // setIsLoading(true);
+    // setPhotos(
+    //   props.photos.map((photo) => {
+    //     console.log(photo);
+
+    //     if (!photo.data) {
+    //       return { _id: photo._id, src: photo.src };
+    //     }
+    //     const bufferArr = photo.data.data;
+
+    //     const blob = new Blob([new Uint8Array(bufferArr)], {
+    //       type: photo.contentType,
+    //     });
+
+    //     return { _id: photo._id, src: URL.createObjectURL(blob) }; // here
+    //   })
+    // );
+    // setIsLoading(false);
+  }, [props.user]);
 
   console.log(photos);
   console.log(props.photos);

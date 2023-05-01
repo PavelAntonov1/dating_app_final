@@ -1,21 +1,23 @@
 const crypto = require("crypto");
 const axios = require("axios");
 const sharp = require("sharp");
-const { faker } = require("@faker-js/faker");
-
-// faker
+// fakersd
 
 const citiesRegions = require("../data/citiesRegions.json");
 const maleNames = require("../data/maleNames.json");
 const femaleNames = require("../data/femaleNames.json");
 
 const generateRandomDateOfBirth = () => {
-  const startDate = new Date();
-  startDate.setFullYear(startDate.getFullYear() - 45);
-  const endDate = new Date();
-  endDate.setFullYear(endDate.getFullYear() - 18);
-
-  return faker.date.between(startDate, endDate);
+  const currentDate = new Date();
+  const minBirthYear = currentDate.getFullYear() - 45;
+  const maxBirthYear = currentDate.getFullYear() - 18;
+  const birthYear =
+    Math.floor(Math.random() * (maxBirthYear - minBirthYear + 1)) +
+    minBirthYear;
+  const birthMonth = Math.floor(Math.random() * 12) + 1;
+  const daysInMonth = new Date(birthYear, birthMonth, 0).getDate();
+  const birthDay = Math.floor(Math.random() * daysInMonth) + 1;
+  return new Date(birthYear, birthMonth - 1, birthDay);
 };
 
 const generateRandomLocation = () => {

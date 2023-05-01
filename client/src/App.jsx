@@ -16,6 +16,7 @@ import Cookies from "js-cookie";
 import ChatPage from "./components/pages/ChatPage";
 import SearchPage from "./components/pages/SearchPage";
 import AdminPage from "./components/pages/AdminPage";
+import { serverName } from "./config";
 import "./App.css";
 
 const App = () => {
@@ -32,7 +33,7 @@ const App = () => {
     console.log("Updating <App />");
 
     if (Cookies.get("jwt")) {
-      fetch("https://flirt-dating.herokuapp.com/api/user", {
+      fetch("${serverName}/api/user", {
         headers: {
           Authorization: `Bearer ${Cookies.get("jwt")}`,
         },
